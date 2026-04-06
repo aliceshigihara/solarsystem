@@ -9,7 +9,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Sistema Solar projeto");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(900, 900);
+            frame.setSize(1200, 900);
             frame.setResizable(false);
 
             simulationPanel panel = new simulationPanel();
