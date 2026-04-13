@@ -18,14 +18,25 @@ public class simulationPanel extends JPanel {
             cy = 450;
 
         corpos.add(new corpoCeleste("Sol", cx, cy, 30, Color.YELLOW, 0, 0, 0));
-        corpos.add(new corpoCeleste("Mercúrio", cx, cy, 5, Color.GRAY, 80, 55, 0.047));
-        corpos.add(new corpoCeleste("Vênus", cx, cy, 8, new Color(255, 165, 0), 120, 90, 0.035));
-        corpos.add(new corpoCeleste("Terra", cx, cy, 9, Color.CYAN, 165, 130, 0.029));
-        corpos.add(new corpoCeleste("Marte", cx, cy, 7, Color.RED, 215, 160, 0.024));
-        corpos.add(new corpoCeleste("Júpiter", cx, cy, 20, new Color(210, 140, 80), 300, 240, 0.013));
-        corpos.add(new corpoCeleste("Saturno", cx, cy, 16, new Color(230, 200, 130), 375, 310, 0.009));
-        corpos.add(new corpoCeleste("Urano", cx, cy, 12, new Color(130, 220, 220), 430, 370, 0.006));
-        corpos.add(new corpoCeleste("Netuno", cx, cy, 11, new Color(60, 80, 230), 480, 420,0.005));
+
+        for (int i = 0; i <= 200; i++) {
+            String nome = "Planeta" + i;
+            int raio = 3 + (int)(Math.random() * 8);
+            Color cor = new Color((int)(Math.random() * 255),(int)(Math.random() * 255),(int)(Math.random() * 255));
+
+            double semieixoX = 60 + Math.random() * 390;
+            double semieixoY = semieixoX * (0.6 + Math.random() * 0.35);
+            if (Math.random() < 0.5) {
+                semieixoY = semieixoX;
+            } else {
+                semieixoY = semieixoX * (0.5 + Math.random() * 0.4);
+            }
+
+            double vel = 0.005 + (1.0 / semieixoX) * 2;
+
+            corpos.add(new corpoCeleste(nome, cx, cy, raio, cor, semieixoX, semieixoY, vel));
+        }
+
     }
 
     public void update() {
