@@ -43,7 +43,7 @@ public class Estrela{
         } else if (sort < 0.85){
             return new Color(255, 220, 180);
         } else if (sort < 0.95){
-            return new Color(255, 200, 255);
+            return new Color(200, 150, 255);
         } else {
             return new Color(255, 180, 180);
         }

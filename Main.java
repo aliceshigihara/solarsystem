@@ -12,7 +12,7 @@ public class Main {
             frame.add(panel);
             frame.setVisible(true);
 
-            Timer timer = new Timer(8, e -> panel.update());
+            Timer timer = new Timer(16, e -> panel.update());
 
             timer.start();
         });

@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Comparator;
-import body.Estrela;
+import body.*;
 
 public class simulationPanel extends JPanel {
     private final List<corpoCeleste> corpos = new ArrayList<>();
@@ -14,6 +14,7 @@ public class simulationPanel extends JPanel {
 
     public simulationPanel() {
         setBackground(Color.BLACK);
+        setupMouseListener();
         initSystem();
     }
 
@@ -25,27 +26,30 @@ public class simulationPanel extends JPanel {
             estrelas.add(new Estrela(900, 900));
         }
 
-        corpos.add(new corpoCeleste("Sol", cx, cy, 30, Color.YELLOW, 0, 0, 0));
+        corpoCeleste sol = new corpoCeleste("sol",cx, cy, 30, Color.YELLOW);
+        corpos.add(sol);
 
         List<corpoCeleste> pcs = new ArrayList<>();
 
-        for (int i = 0; i <= 12; i++) {
-            String nome = "Planeta" + i;
-            int raio = 3 + (int)(Math.random() * 8);
+        for (int i = 0; i <= 8; i++) {
+            String nome = "";
+            int raio = 4 + (int)(Math.random() * 10);
             Color cor = new Color((int)(Math.random() * 255),(int)(Math.random() * 255),(int)(Math.random() * 255));
 
-            double semieixoX = 60 + Math.random() * 390;
-            double semieixoY = semieixoX * (0.6 + Math.random() * 0.35);
+            double semieixoX = 80 + (i * 35) + Math.random() * 30;
+            double semieixoY;
             if (Math.random() < 0.5) {
                 semieixoY = semieixoX;
             } else {
                 semieixoY = semieixoX * (0.5 + Math.random() * 0.4);
             }
+            double velAngular = 0.003 + (1.5 / semieixoX);
 
-            double vel = 0.005 + (1.0 / semieixoX) * 2;
+            Nucleo nucleo = Nucleo.criarNucleoAleatorio(raio, semieixoX);
 
-            corpoCeleste p = new corpoCeleste(nome, cx, cy, raio, cor, semieixoX, semieixoY, vel);
-            corpos.add(p);
+            Orbita orbita = new Orbita(sol, semieixoX, semieixoY, velAngular);
+
+            Planetas p = new Planetas(nome, raio, cor, orbita, nucleo, Math.random() < 0.5);            corpos.add(p);
 
             if (Math.random() < 0.5){
                 pcs.add(p);
@@ -56,21 +60,23 @@ public class simulationPanel extends JPanel {
             int nums = 1 + (int)(Math.random() * 3);
 
             for(int j = 0; j < nums; j++){
-                String ns = p.nome + "-nsat" + j;
+                String ns = " ";
                 int rs = 2 + (int)(Math.random() * 4);
                 Color cs = Color.RED;
-                double semieixoXs = 20 + j * 10;
-                double semieixoYs = semieixoXs * (0.7 + Math.random() * 0.2);
-                double vs = 0.05;
+                double semieixoXs = 15 + (j * 10) + Math.random() * 10;
+                double semieixoYs = semieixoXs * (0.7 + Math.random() * 0.3);
+                double vs = 0.08 + Math.random() * 0.04;
 
-                corpoCeleste s = new corpoCeleste(ns,0, 0,rs,cs,semieixoXs,semieixoYs,vs,p);
-                corpos.add(s);
+                Orbita os = new Orbita(p, semieixoXs, semieixoYs, vs);
+
+                Satelite sat = new Satelite(ns, rs, cs, os, Math.random() < 0.3);
+
+                corpos.add(sat);
             }
         }
     }
 
     public void update() {
-
         estrelas.forEach(Estrela::step);
 
         Map<corpoCeleste, Integer> prf = new HashMap<>();
@@ -85,8 +91,28 @@ public class simulationPanel extends JPanel {
     }
 
     private int calcularprf(corpoCeleste c){
-        if (c.orbitando == null) return 0;
-        return 1 + calcularprf(c.orbitando);
+        if (!c.temOrbita()) return 0;
+        return 1 + calcularprf(c.getOrbita().getCentro());
+    }
+
+    private corpoCeleste corpoSobMouse = null;
+
+    // Método para detectar mouse (adicione no construtor)
+    private void setupMouseListener() {
+        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                corpoSobMouse = null;
+                for (corpoCeleste c : corpos) {
+                    double dx = e.getX() - c.getX();
+                    double dy = e.getY() - c.getY();
+                    if (Math.sqrt(dx*dx + dy*dy) < c.getRaio() + 3) {
+                        corpoSobMouse = c;
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -99,28 +125,62 @@ public class simulationPanel extends JPanel {
         estrelas.forEach(e -> e.draw(g2));
 
         g2.setColor(new Color(255, 255, 255, 30));
-           for (corpoCeleste c : corpos) {
-               if (c.orbitando == null && c.semieixoX > 0) {
-                   double centroX = c.focoX + c.c;
-                   double centroY = c.focoY;
-                   g2.draw(new Ellipse2D.Double(
-                       centroX - c.semieixoX,
-                       centroY - c.semieixoY,
-                       c.semieixoX * 2,
-                       c.semieixoY * 2
-                   ));
-               } else if (c.orbitando != null) {
-                   double centroX = c.orbitando.x + c.c;
-                   double centroY = c.orbitando.y;
-                   g2.draw(new Ellipse2D.Double(
-                       centroX - c.semieixoX,
-                       centroY - c.semieixoY,
-                       c.semieixoX * 2,
-                       c.semieixoY * 2
-                   ));
-               }
-           }
 
-           corpos.forEach(c -> c.desenhar(g2));
-       }
-   }
+        for (corpoCeleste c : corpos) {
+            if (c.temOrbita()) {
+                Orbita orb = c.getOrbita();
+                corpoCeleste centro = orb.getCentro();
+                double centroX = centro.getX() + orb.getC();
+                double centroY = centro.getY();
+
+                g2.draw(new Ellipse2D.Double(
+                    centroX - orb.getSemieixoX(),
+                    centroY - orb.getSemieixoY(),
+                    orb.getSemieixoX() * 2,
+                    orb.getSemieixoY() * 2
+                ));
+            }
+        }
+
+        corpos.forEach(c -> c.draw(g2));
+
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Arial", Font.BOLD, 14));
+        g2.drawString("Sistema Solar - Simulação", 20, 30);
+        g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2.drawString("Corpos: " + corpos.size(), 20, 50);
+        g2.drawString("Estrelas: " + estrelas.size(), 20, 65);
+
+        int planetas = 0, satelites = 0;
+        for (corpoCeleste c : corpos) {
+            if (c instanceof Planetas) planetas++;
+            if (c instanceof Satelite) satelites++;
+        }
+        g2.drawString("Planetas: " + planetas, 20, 80);
+        g2.drawString("Satélites: " + satelites, 20, 95);
+
+        if (corpoSobMouse instanceof Planetas) {
+            Planetas p = (Planetas) corpoSobMouse;
+            Nucleo n = p.getNucleo();
+
+            g2.setColor(new Color(0, 0, 0, 220));
+            g2.fillRect((int)corpoSobMouse.getX() + 20, (int)corpoSobMouse.getY() - 60, 220, 110);
+            g2.setColor(Color.WHITE);
+            g2.drawRect((int)corpoSobMouse.getX() + 20, (int)corpoSobMouse.getY() - 60, 220, 110);
+
+            // Texto
+            g2.setFont(new Font("Arial", Font.BOLD, 12));
+            g2.drawString("☄ " + corpoSobMouse.getNome(),
+                          (int)corpoSobMouse.getX() + 25, (int)corpoSobMouse.getY() - 40);
+
+            g2.setFont(new Font("Arial", Font.PLAIN, 10));
+            String[] linhas = n.getDescricao().split("\n");
+            for (int i = 0; i < linhas.length; i++) {
+                g2.drawString(linhas[i],
+                             (int)corpoSobMouse.getX() + 25,
+                             (int)corpoSobMouse.getY() - 25 + (i * 15));
+            }
+        }
+
+    }
+}
