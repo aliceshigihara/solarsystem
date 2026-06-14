@@ -10,22 +10,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
-
 import body.*;
 import human.*;
 
-public class simulationPanel extends JPanel {
 
+public class simulationPanel extends JPanel {
+//instanciando uma lista dos corpos do sistema
     private final List<corpoCeleste> corpos = new ArrayList<>();
     private final List<Estrela> estrelas = new ArrayList<>();
     private final List<Planetas> planetasCarregados = new ArrayList<>();
     private final List<ConfigFoguete> foguetesConfigurados = new ArrayList<>();
-
+//instanciando objetos auxiliares e sol
     private corpoCeleste corpoSobMouse = null;
     private corpoCeleste sol;
     private boolean sistemaInicializado = false;
     private int contadorFoguete = 0;
-
+//criação da classe configfoguete para parametrizar tempo dos foguetes
     private static class ConfigFoguete {
         String nomeBase;
         int raio;
@@ -45,13 +45,13 @@ public class simulationPanel extends JPanel {
             this.intervaloLancamentoMs = intervaloLancamentoMs;
         }
     }
-
+//gera o cenario
     public simulationPanel() {
         setBackground(Color.BLACK);
         setupMouseListener();
         setupResizeListener();
     }
-
+//inicia o sistema, gera as estrelas e carrega o arquivo texto dos planetas e foguetes
     public void initSystem() {
         if (getWidth() == 0 || getHeight() == 0) return;
         if (sistemaInicializado) return;
@@ -69,11 +69,9 @@ public class simulationPanel extends JPanel {
 
         try {
             carregarSistema("sistema_solar.txt");
+            //exceção caso o nome do arquivo esteja diferente
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Erro ao carregar sistema_solar.txt:\n\n" + e.getMessage(),
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,"erro ao carregar sistema_solar.txt:\n\n" + e.getMessage(),"erro", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return;
         }
@@ -82,14 +80,16 @@ public class simulationPanel extends JPanel {
             sol.x = cx;
             sol.y = cy;
         }
-
+//cria uma lista com os planetas carregados do arquivo texto
         List<Planetas> planetasComSatelites = new ArrayList<>();
         for (Planetas p : planetasCarregados) {
             if (p.getRaio() > 7) {
                 planetasComSatelites.add(p);
             }
         }
-
+/* planetas com satelites, parametros criados (orbitas para cada planeta etc etc) conforme os atributos do arquivo texto
+simplificar a criação dos parametros;
+*/
         for (corpoCeleste p : planetasComSatelites) {
             int nums = 1 + (int) (Math.random() * 3);
             for (int j = 0; j < nums; j++) {
@@ -120,7 +120,7 @@ public class simulationPanel extends JPanel {
             corpos.add(ast);
         }
     }
-
+//ler arquivo
     private void carregarSistema(String caminhoArquivo) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
             String linha;
@@ -159,7 +159,7 @@ public class simulationPanel extends JPanel {
             throw new IOException("Nenhum planeta carregado.");
         }
     }
-
+//carregar as estrelas no fundo
     private void carregarEstrela(String[] partes, int linhaNum) throws IOException {
         if (partes.length < 6) {
             throw new IOException("Linha " + linhaNum + " inválida para estrela.");
