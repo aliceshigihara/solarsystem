@@ -52,6 +52,7 @@ public class drawHUD {
         g2.drawString("Sistema Solar", 20, 30);
 
         g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2.drawString("Ativar/Desativar estrelas -> D", 20, 240);
         g2.drawString("Sol: 1", 20, 50);
         g2.drawString("Planetas: " + planetas, 20, 65);
         g2.drawString("Satélites: " + satelites, 20, 80);
@@ -113,5 +114,6 @@ public class drawHUD {
             g2.drawString("Destino: " + f.getDestino().getNome(), tx + 5, ty + 35);
             g2.drawString("Status: " + (f.isAterrissado() ? "Aterrissado" : "Em voo"), tx + 5, ty + 50);
         }
+
     }
 }
