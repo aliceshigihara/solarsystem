@@ -1,0 +1,8 @@
+HOW TO RUN SOLAR SYSTEM SIMULATOR!
+
+(1) open terminal
+(2) java -cp bin app.Main
+
+* make sure you have java installed
+* if your IDE warn about package problems, ignore
+* if there is no classes in bin/, do this: javac -d bin $(find src -name "*.java") before step (2)

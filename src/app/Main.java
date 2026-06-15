@@ -1,0 +1,28 @@
+package app;
+import simulation.simulationPanel;
+import javax.swing.*;
+import java.awt.BorderLayout;
+
+public class Main {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("OOP Simulator");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(1200, 900);
+            frame.setLocationRelativeTo(null);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setLayout(new BorderLayout());
+
+            simulationPanel panel = new simulationPanel();
+
+            frame.add(panel, BorderLayout.CENTER);
+
+            frame.setVisible(true);
+            panel.initSystem();
+
+            Timer timer = new Timer
+            (8, e -> panel.update());
+            timer.start();
+        });
+    }
+}
