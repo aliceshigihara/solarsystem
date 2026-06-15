@@ -1,9 +1,0 @@
-estrela;Sol;0;0;30;255;255;0;0;0;false
-planeta;Mercúrio;0;0;4;169;169;169;60;0.205;false
-planeta;Vênus;0;0;7;255;200;100;100;0.007;true
-planeta;Terra;0;0;8;100;150;255;140;0.017;true
-planeta;Marte;0;0;5;255;100;100;180;0.093;false
-planeta;Júpiter;0;0;16;200;150;100;270;0.048;false
-planeta;Saturno;0;0;14;200;180;120;340;0.056;false
-planeta;Urano;0;0;11;150;200;255;430;0.047;false
-planeta;Netuno;0;0;10;50;100;255;500;0.009;false
