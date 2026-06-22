@@ -62,10 +62,3 @@ java -cp bin app.Main
 - Controle visual de estrelas
 
 ### ESTRUTURA DO PROJETO
-
-src/
-├── app/         # ponto de entrada
-├── simulation/  # painel, input, updater, HUD
-├── body/        # corpos celestes e órbitas
-├── human/       # foguetes
-└── resources/   # arquivos de configuração
