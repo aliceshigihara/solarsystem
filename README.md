@@ -62,3 +62,4 @@ java -cp bin app.Main
 - Controle visual de estrelas
 
 ### ESTRUTURA DO PROJETO
+![Estrutura do projeto](./assets/diretorios.png)
